@@ -396,3 +396,383 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-link {
+      text-decoration: none;
+      color: var(--ink-main);
+      font-weight: 500;
+      padding: 4px 10px;
+      border: 1px solid var(--ink-main);
+      transition: all 0.2s;
+      cursor: pointer;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .action-link:hover {
+      background-color: var(--ink-main);
+      color: var(--bg-paper);
+    }
+
+    /* モーダル（PDFプレビュー用） */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 22, 25, 0.82);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-window {
+      background: var(--bg-paper);
+      width: 100%;
+      max-width: 960px;
+      height: 85vh;
+      border: 1px solid var(--line-color);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-header {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--line-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: 1px solid var(--ink-main);
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .modal-body {
+      flex: 1;
+      background: #2C2E31;
+      position: relative;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* フッター */
+    footer {
+      padding: 40px 32px;
+      border-top: 1px solid var(--line-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--ink-sub);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    @media (max-width: 820px) {
+      header.hero {
+        grid-template-columns: 1fr;
+        padding: 48px 20px 36px;
+      }
+      .hero-profile {
+        border-left: none;
+        border-top: 1px solid var(--line-color);
+        padding-left: 0;
+        padding-top: 24px;
+      }
+      .top-bar, .control-bar, .archive-card, footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .archive-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ledger-wrapper">
+  <!-- トップステータスバー -->
+  <div class="top-bar">
+    <div class="status-indicator">
+      <span class="status-dot"></span>
+      <span>PORTFOLIO LEDGER // ARCHIVE SYSTEM</span>
+    </div>
+    <div id="total-summary">LOADING RECORDS...</div>
+  </div>
+
+  <!-- ヒーローセクション -->
+  <header class="hero">
+    <div>
+      <span class="hero-label">Corporate Research &amp; Financial Analysis</span>
+      <h1 class="hero-title">
+        The Analytical <span class="italic">Ledger.</span>
+      </h1>
+      <p class="hero-subtitle">企業研究・経営分析アーカイブ</p>
+    </div>
+
+    <div class="hero-profile">
+      <p>
+        会計学の視点から企業の財務構造・ビジネスモデルを紐解いたリサーチ資料および経営分析レポートの保管庫です。定性・定量の両面から企業価値を考察し、継続的に記録を更新しています。
+      </p>
+      <table class="profile-table">
+        <tr>
+          <td>MAJOR</td>
+          <td>Accounting / 会計学専攻</td>
+        </tr>
+        <tr>
+          <td>FOCUS</td>
+          <td>Financial Industry / 金融業界志望</td>
+        </tr>
+        <tr>
+          <td>REPOSITORY</td>
+          <td>htoo18kkre.github.io</td>
+        </tr>
+      </table>
+    </div>
+  </header>
+
+  <!-- フィルタ＆検索バー -->
+  <section class="control-bar">
+    <div class="filter-group" id="filter-buttons">
+      <button class="filter-btn active" data-filter="ALL">ALL / すべて</button>
+      <button class="filter-btn" data-filter="企業研究">企業研究</button>
+      <button class="filter-btn" data-filter="経営分析">経営分析</button>
+      <button class="filter-btn" data-filter="レポート">レポート</button>
+    </div>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search by keyword or ID...">
+    </div>
+  </section>
+
+  <!-- 資料一覧グリッド -->
+  <main class="archive-grid" id="archive-grid">
+    <!-- JavaScriptで自動生成されます -->
+  </main>
+
+  <!-- フッター -->
+  <footer>
+    <div>&copy; 2026 htoo18kkre — Financial &amp; Management Analysis Portfolio</div>
+    <div>DESIGNED AS A LIVING LEDGER</div>
+  </footer>
+</div>
+
+<!-- PDFプレビュー用モーダル -->
+<div class="modal-overlay" id="pdf-modal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <span id="modal-title">DOCUMENT PREVIEW</span>
+      <button class="modal-close" id="modal-close">CLOSE [×]</button>
+    </div>
+    <div class="modal-body">
+      <iframe id="modal-iframe" src=""></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  /**
+   * ============================================================================
+   * 【資料データ管理リスト】
+   * 今後資料を追加する際は、この配列（ARCHIVE_DATA）に新しいオブジェクトを1つ追加するだけで
+   * 自動的にサイトへ反映されます。
+   * ============================================================================
+   */
+  const ARCHIVE_DATA = [
+    {
+      id: "report-2026-01",
+      title: "企業研究スライド（第1回）",
+      category: "企業研究",
+      type: "slide", // "slide"（横型スライド） または "document"（縦型レポート）
+      date: "2026/10/14",
+      size: "2.2 MB",
+      description: "対象企業の事業ポートフォリオ、収益構造、および業界内での競争優位性に関する調査スライド。",
+      fileUrl: "./files/report-2026-01.pdf",
+      coverLabel: "企業研究"
+    },
+    {
+      id: "report-2026-02",
+      title: "企業研究スライド（第2回）",
+      category: "企業研究",
+      type: "slide",
+      date: "2026/10/14",
+      size: "2.1 MB",
+      description: "ビジネスモデルの変遷と中長期の成長戦略、財務数値から読み解くリスク要因と機会の比較分析。",
+      fileUrl: "./files/report-2026-02.pdf",
+      coverLabel: "企業研究"
+    },
+    {
+      id: "report-2026-03",
+      title: "経営分析発表スライド",
+      category: "経営分析",
+      type: "slide",
+      date: "2026/10/14",
+      size: "1 MB",
+      description: "財務諸表データをもとに収益性・安全性・効率性の各指標を時系列および同業他社比較で検証した発表資料。",
+      fileUrl: "./files/report-2026-03.pdf",
+      coverLabel: "経営分析発表"
+    },
+    {
+      id: "report-2026-04",
+      title: "財務・経営分析レポート（詳細論考）",
+      category: "レポート",
+      type: "document",
+      date: "2026/10/15",
+      size: "772 KB",
+      description: "会計基準の観点や財務指標の背景にある経営判断について、文章とデータで体系的にまとめた詳細レポート。",
+      fileUrl: "./files/report-2026-04.pdf",
+      coverLabel: "REPORT"
+    }
+  ];
+
+  // DOM要素の取得
+  const gridEl = document.getElementById("archive-grid");
+  const summaryEl = document.getElementById("total-summary");
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  const searchInput = document.getElementById("search-input");
+  const modal = document.getElementById("pdf-modal");
+  const modalTitle = document.getElementById("modal-title");
+  const modalIframe = document.getElementById("modal-iframe");
+  const modalClose = document.getElementById("modal-close");
+
+  let currentFilter = "ALL";
+  let currentKeyword = "";
+
+  // カード描画関数
+  function renderArchive() {
+    const filtered = ARCHIVE_DATA.filter(item => {
+      const matchCategory = currentFilter === "ALL" || item.category === currentFilter;
+      const keyword = currentKeyword.toLowerCase();
+      const matchKeyword =
+        item.title.toLowerCase().includes(keyword) ||
+        item.id.toLowerCase().includes(keyword) ||
+        item.description.toLowerCase().includes(keyword) ||
+        item.category.toLowerCase().includes(keyword);
+      return matchCategory && matchKeyword;
+    });
+
+    summaryEl.textContent = `TOTAL RECORDS: ${ String(filtered.length).padStart(2, '0') } ITEMS`;
+
+    if (filtered.length === 0) {
+      gridEl.innerHTML = `<div style="padding: 48px 32px; color: var(--ink-muted); font-family: var(--font-mono);">該当する資料が見つかりませんでした。</div>`;
+      return;
+    }
+
+    gridEl.innerHTML = filtered.map((item, idx) => {
+      const indexNumber = String(idx + 1).padStart(2, "0");
+      const isSlide = item.type === "slide";
+      const formatText = isSlide ? "SLIDE DECK (16:9)" : "REPORT DOC (A4)";
+
+      // 横型スライドと縦型レポートでプレビューの見た目を出し分け
+      const mockupHtml = isSlide
+        ? `<div class="mockup-sheet slide">
+             <div class="sheet-label">${item.coverLabel}</div>
+           </div>`
+        : `<div class="mockup-sheet document">
+             <div class="doc-lines">
+               <span></span><span></span><span></span><span></span>
+               <span></span><span></span><span></span>
+             </div>
+           </div>`;
+
+      return `
+        <article class="archive-card">
+          <div>
+            <div class="card-meta-top">
+              <span class="doc-index">ENTRY // #${indexNumber}</span>
+              <span class="doc-category">${item.category}</span>
+            </div>
+
+            <div class="preview-stage" onclick="openPreview('${item.fileUrl}', '${item.id} : ${item.title}')">
+              ${mockupHtml}
+              <span class="format-badge">${formatText}</span>
+            </div>
+
+            <h2 class="doc-title">${item.title}</h2>
+            <span class="doc-filename">${item.id}.pdf</span>
+            <p class="doc-desc">${item.description}</p>
+          </div>
+
+          <div class="card-footer">
+            <div>${item.date} &middot; ${item.size}</div>
+            <div class="card-actions">
+              <button class="action-link" onclick="openPreview('${item.fileUrl}', '${item.id} : ${item.title}')">PREVIEW</button>
+              <a class="action-link" href="${item.fileUrl}" target="_blank" rel="noopener">OPEN PDF ↗</a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  // カテゴリフィルタ切り替え
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter;
+      renderArchive();
+    });
+  });
+
+  // 検索バー入力
+  searchInput.addEventListener("input", e => {
+    currentKeyword = e.target.value;
+    renderArchive();
+  });
+
+  // PDFプレビューモーダルを開く
+  window.openPreview = function(url, title) {
+    modalTitle.textContent = title;
+    modalIframe.src = url;
+    modal.classList.add("open");
+  };
+
+  // モーダルを閉じる
+  modalClose.addEventListener("click", () => {
+    modal.classList.remove("open");
+    modalIframe.src = "";
+  });
+
+  modal.addEventListener("click", e => {
+    if (e.target === modal) {
+      modal.classList.remove("open");
+      modalIframe.src = "";
+    }
+  });
+
+  // 初回描画
+  renderArchive();
+</script>
+
+</body>
+</html>

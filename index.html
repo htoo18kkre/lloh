@@ -1,1 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FINANCIAL & CORPORATE RESEARCH ARCHIVE | Portfolio</title>
+  <!-- Google Fonts: 明朝体・サンセリフ・等幅フォントの組み合わせで独特な知性を演出 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Shippori+Mincho:wght@500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-paper: #F3F0E8;       /* 温かみのある帳簿・専門紙のような背景色 */
+      --bg-card: #FAF8F3;        /* カード背景 */
+      --ink-main: #141619;       /* 深い墨色 */
+      --ink-sub: #5A5D60;        /* 補助テキスト */
+      --ink-muted: #8C8E90;      /* メタデータ用 */
+      --accent-brass: #9E7B42;   /* クラシックな真鍮・ゴールド系アクセント */
+      --accent-navy: #1D2D44;    /* 金融感のあるディープネイビー */
+      --line-color: #D8D3C8;     /* 元帳の罫線カラー */
+      --line-dark: #141619;
+      --font-serif-en: 'Cormorant Garamond', serif;
+      --font-serif-jp: 'Shippori Mincho', serif;
+      --font-sans: 'Noto Sans JP', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      color: var(--ink-main);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      /* 微細なノイズ・グリッド感 */
+      background-image: radial-gradient(rgba(20, 22, 25, 0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* 外枠の元帳フレーム */
+    .ledger-wrapper {
+      max-width: 1240px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line-color);
+      border-right: 1px solid var(--line-color);
+      min-height: 100vh;
+      background-color: rgba(243, 240, 232, 0.85);
+      backdrop-filter: blur(4px);
+    }
+
+    /* トップステータスバー（帳簿のヘッダー風） */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 32px;
+      border-bottom: 1px solid var(--line-color);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--ink-sub);
+      letter-spacing: 0.08em;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent-brass);
+      border-radius: 50%;
+    }
+
+    /* ヒーローセクション */
+    header.hero {
+      padding: 72px 32px 56px;
+      border-bottom: 1px solid var(--line-dark);
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 40px;
+      align-items: end;
+    }
+
+    .hero-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-brass);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif-en);
+      font-size: clamp(2.6rem, 5vw, 4.4rem);
+      font-weight: 500;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .hero-title span.italic {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent-navy);
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-serif-jp);
+      font-size: 1.15rem;
+      color: var(--ink-main);
+      letter-spacing: 0.08em;
+    }
+
+    .hero-profile {
+      border-left: 1px solid var(--line-color);
+      padding-left: 28px;
+      font-size: 0.88rem;
+      color: var(--ink-sub);
+    }
+
+    .profile-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .profile-table td {
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--line-color);
+    }
+
+    .profile-table td:first-child {
+      color: var(--ink-muted);
+      width: 110px;
+    }
+
+    /* コントロールバー（フィルタ＆検索・件数表示） */
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--line-color);
+      flex-wrap: wrap;
+      gap: 16px;
+      background-color: var(--bg-card);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--line-color);
+      padding: 7px 18px;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--ink-sub);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      letter-spacing: 0.05em;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--ink-main);
+      color: var(--ink-main);
+    }
+
+    .filter-btn.active {
+      background-color: var(--ink-main);
+      border-color: var(--ink-main);
+      color: var(--bg-paper);
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--line-color);
+      padding: 6px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--ink-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-bottom-color: var(--ink-main);
+    }
+
+    /* 資料グリッド（元帳のセル構造） */
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    }
+
+    .archive-card {
+      border-right: 1px solid var(--line-color);
+      border-bottom: 1px solid var(--line-color);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background-color 0.3s ease;
+      position: relative;
+      background-color: transparent;
+    }
+
+    .archive-card:hover {
+      background-color: var(--bg-card);
+    }
+
+    /* カード上部：インデックス番号とカテゴリ */
+    .card-meta-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .doc-index {
+      color: var(--accent-brass);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .doc-category {
+      padding: 2px 10px;
+      border: 1px solid var(--line-color);
+      color: var(--ink-sub);
+      font-size: 0.7rem;
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* サムネイル・プレビュー枠（横型スライド / 縦型レポートの比率表現） */
+    .preview-stage {
+      width: 100%;
+      height: 210px;
+      background-color: #E8E4DA;
+      border: 1px solid var(--line-color);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* 抽象的な幾何学モックアップ（サムネイル画像がない場合もおしゃれに見せる） */
+    .mockup-sheet {
+      background-color: #FFFFFF;
+      box-shadow: 0 8px 24px rgba(20, 22, 25, 0.08);
+      border: 1px solid rgba(0,0,0,0.08);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 14px;
+    }
+
+    /* 横型スライド（16:9） */
+    .mockup-sheet.slide {
+      width: 88%;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* 縦型レポート（A4比率） */
+    .mockup-sheet.document {
+      height: 92%;
+      aspect-ratio: 1 / 1.414;
+    }
+
+    .archive-card:hover .mockup-sheet {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    /* スライド風のグラフィック装飾 */
+    .mockup-sheet.slide::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 42%;
+      background: linear-gradient(135deg, var(--accent-navy) 0%, #2B4162 100%);
+      clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%);
+    }
+
+    .mockup-sheet.slide .sheet-label {
+      margin-left: auto;
+      width: 52%;
+      text-align: center;
+      align-self: center;
+      font-family: var(--font-serif-jp);
+      font-size: 0.8rem;
+      color: var(--ink-main);
+      border-bottom: 1px solid var(--line-color);
+      padding-bottom: 4px;
+    }
+
+    /* レポート風のグラフィック装飾 */
+    .mockup-sheet.document .doc-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .mockup-sheet.document .doc-lines span {
+      display: block;
+      height: 3px;
+      background-color: #DCDCDC;
+      width: 100%;
+    }
+
+    .mockup-sheet.document .doc-lines span:nth-child(1) {
+      width: 60%;
+      margin: 0 auto 8px;
+      height: 4px;
+      background-color: var(--ink-main);
+    }
+
+    .mockup-sheet.document .doc-lines span:nth-child(4) { width: 80%; }
+    .mockup-sheet.document .doc-lines span:nth-child(7) { width: 65%; }
+
+    .format-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      background: rgba(243, 240, 232, 0.9);
+      padding: 2px 6px;
+      border: 1px solid var(--line-color);
+    }
+
+    /* タイトル・説明文 */
+    .doc-title {
+      font-family: var(--font-serif-jp);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--ink-main);
+      line-height: 1.4;
+    }
+
+    .doc-filename {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-brass);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .doc-desc {
+      font-size: 0.86rem;
+      color: var(--ink-sub);
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    /* カード下部：日付・容量・アクションボタン */
+    .card-footer {
+      border-top: 1px solid var(--line-color);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
